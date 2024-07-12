@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Link to CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='Estilos.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
+    <title>Lombardi</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <!-- Icons --> 
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <!-- Icon for link -->
+    <link rel="icon" href="{{ url_for('static', filename='src/icons8-wine-48.ico') }}" title="wine icons">   
+    <style>
+        html, body {
+            height: 100%;
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        footer {
+            width: 100%;
+            background-color: #343a40;
+            color: white;
+        }
+        .form-container {
+            margin-top: 100px; /* Adjust this value as needed */
+        }
+    </style>
+</head>
+<body>
+    <main>
+        <!-- Header -->
+        <header>
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-md navbar-dark bg-secondary fixed-top">
+                <div class="container-fluid">
+                    <a class="navbar-brand d-md-none" href="#">
+                        <img src="{{ url_for('static', filename='src/nuevo_logo_negro.webp') }}" alt="Logo">
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav mx-auto">
+                            <li class="nav-item">
+                                <a class="nav-link active" aria-current="page" href="{{ url_for('index') }}">Home</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('tienda') }}">Tienda</a>
+                            </li>
+                            <a class="navbar-brand d-none d-md-block" href="#">
+                                <img src="{{ url_for('static', filename='src/nuevo_logo_negro.webp') }}" alt="">
+                            </a>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('eventos') }}">Eventos</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('index') }}#club-section">Contactos</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+        <div class="container form-container">
+            <div class="mt-5 pt-5">
+                <div class="text-center">
+                    <h2>Registro</h2>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-md-6 col-lg-5">
+                        <div class="card">
+                            <div class="card-body">
+                                <form action="{{ url_for('register') }}" method="POST">
+                                    <div class="mb-3">
+                                        <label for="nombre" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="telefono" class="form-label">Teléfono</label>
+                                        <input type="text" class="form-control" id="telefono" name="telefono">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="direccion" class="form-label">Dirección</label>
+                                        <input type="text" class="form-control" id="direccion" name="direccion">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Contraseña</label>
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- Footer -->
+    <footer class="bg-dark text-white">
+        <div class="container py-5">
+            <div class="row">
+                <!-- About Us section with logo on the side -->
+                <div class="col-lg-4 mb-4">
+                    <div class="d-flex align-items-center">
+                        <img src="{{ url_for('static', filename='src/nuevo_logo_negro.webp') }}" alt="Logo" style="width: 150px; height: auto;">
+                        <div>
+                            <h5 class="mb-4">Sobre Nosotros</h5>
+                            <p>Somos Bodegas Lombardi, una empresa dedicada a ofrecer vinos de alta calidad desde 1912.</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Contact section -->
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-4">Contacto</h5>
+                    <p>Dirección: Calle Principal, Mendoza</p>
+                    <p>Teléfono: +123456789</p>
+                    <p>Email: info@bodegaslombardi.com</p>
+                </div>
+                <!-- Follow Us section -->
+                <div class="col-lg-4 mb-4">
+                    <h5 class="mb-4">Síguenos en las Redes Sociales</h5>
+                    <a class="btn btn-outline-light btn-floating m-1" href="https://www.facebook.com/profile.php?id=61559911103362" role="button"><i class="fab fa-facebook-f"></i></a>
+                    <a class="btn btn-outline-light btn-floating m-1" href="#" role="button"><i class="fab fa-twitter"></i></a>
+                    <a class="btn btn-outline-light btn-floating m-1" href="https://www.instagram.com/winelombardi/" role="button"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="text-center py-3">
+            <p class="mb-0">© 2024 Bodegas Lombardi. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap and scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="{{ url_for('static', filename='main.js') }}"></script>
+    <script src="{{ url_for('static', filename='formulario.js') }}"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayOpyi-2KF_Qj3lc18qcOqH3On2jwPz8&libraries=places&callback=initMap" defer></script>
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
