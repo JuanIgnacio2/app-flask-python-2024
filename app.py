@@ -4,7 +4,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
-from models import db, Vino, Cliente, Pedido, DetallePedido,Evento
+from models import db, Vino, Cliente, Pedido, DetallePedido, Evento, Reserva
 
 def create_app():
     app = Flask(__name__)
@@ -24,7 +24,6 @@ def create_app():
         vinos = Vino.query.all()
         return render_template('Tienda.html', vinos=vinos)
     
-    #Reservas-Eventos
     @app.route('/eventos')
     def eventos():
         eventos = Evento.query.all()
@@ -33,14 +32,14 @@ def create_app():
     @app.route('/reservar/<int:evento_id>', methods=['POST'])
     def reservar(evento_id):
         evento = Evento.query.get_or_404(evento_id)
-        # cliente_id = request.form['cliente_id']  # Si tienes autenticación, usa esto.
+        cliente_id = session.get('cliente_id')
         cantidad = int(request.form['cantidad'])
         total = cantidad * evento.precio
 
-        nueva_reserva = Reserva(id_evento=evento_id, cantidad=cantidad, total=total)
+        nueva_reserva = Reserva(id_evento=evento_id, id_cliente=cliente_id, cantidad=cantidad, total=total)
         db.session.add(nueva_reserva)
         db.session.commit()
-    
+
         return redirect(url_for('eventos'))
 
     @app.route('/cart')
@@ -83,8 +82,6 @@ def create_app():
         session.pop('cliente_nombre', None)
         return redirect(url_for('index'))
     
-    
-    # Inicio de pedido
     @app.route('/pedido', methods=['POST'])
     def realizar_pedido():
         data = request.get_json()
@@ -94,37 +91,39 @@ def create_app():
 
         vinos_pedidos = data.get('vinos', [])
         if not vinos_pedidos:
-            return jsonify({'message': 'Debe especificar los vinos a pedir'})
+            return jsonify({'message': 'Debe especificar los vinos a pedir'}), 400
 
         total = 0
-        for item in vinos_pedidos:
-            vino = Vino.query.get(item['id_vino'])
-            if not vino or vino.cantidad < item['cantidad']:
-                return jsonify({'message': f'El vino con id {item["id_vino"]} no está disponible en la cantidad solicitada'}), 400
-            total += vino.precio * item['cantidad']
-
         try:
+            for item in vinos_pedidos:
+                vino = Vino.query.get(item['id_vino'])
+                if not vino or vino.cantidad < item['cantidad']:
+                    return jsonify({'message': f'El vino con id {item["id_vino"]} no está disponible en la cantidad solicitada'}), 400
+                total += vino.precio * item['cantidad']
+
+            # Crear el nuevo pedido
             new_pedido = Pedido(id_cliente=cliente_id, total=total, estado='pendiente')
             db.session.add(new_pedido)
-            db.session.flush()  # Flush para obtener el ID del nuevo pedido antes de hacer commit
+            db.session.flush()
 
+            # Agregar detalles del pedido
             for item in vinos_pedidos:
+                vino = Vino.query.get(item['id_vino'])
                 detalle = DetallePedido(
                     id_pedido=new_pedido.id_pedido,
                     id_vino=item['id_vino'],
                     cantidad=item['cantidad'],
-                    precio_unitario=Vino.query.get(item['id_vino']).precio  # Precio unitario
+                    precio_unitario=vino.precio  # Usar el precio del vino actual
                 )
                 db.session.add(detalle)
                 vino.cantidad -= item['cantidad']  # Reducir el stock del vino
             
             db.session.commit()  # Confirmar todas las operaciones en una sola transacción
             return jsonify({'message': 'Pedido realizado exitosamente', 'order_id': new_pedido.id_pedido})
-        
+
         except Exception as e:
             db.session.rollback()  # Revertir en caso de error
             return jsonify({'message': 'Error al realizar el pedido', 'error': str(e)}), 500
-        
 
     @app.route('/pedido/<int:id_pedido>/state', methods=['PUT'])
     def actualizar_estado(id_pedido):
@@ -145,23 +144,40 @@ def create_app():
     
     @app.route('/pedidos', methods=['GET'])
     def listar_pedidos():
-        pedidos = Pedido.query.all()
-        resultado = []
-        for pedido in pedidos:
-            detalles = DetallePedido.query.filter_by(id_pedido=pedido.id_pedido).all()
-            detalle_pedidos = [{'id_vino': d.id_vino, 'cantidad': d.cantidad} for d in detalles]
-            resultado.append({
-                'id_pedido': pedido.id_pedido,
-                'id_cliente': pedido.id_cliente,
-                'fecha_pedido': pedido.fecha_pedido,
-                'total': pedido.total,
-                'estado': pedido.estado,
-                'detalles': detalles_pedido
-            })
-        return jsonify(resultado)
+        try:
+            pedidos = Pedido.query.options(joinedload(Pedido.detalles)).all()
+            resultado = []
 
-    @app.route('/pedidos/<int:id_cliente>', methods=['GET'])
-    def listar_pedidos_cliente(id_cliente):
+            for pedido in pedidos:
+                detalles_pedido = [{
+                    'id_vino': detalle.id_vino,
+                    'nombre_vino': detalle.vino.vino.nombre,
+                    'cantidad': detalle.cantidad,
+                    'precio_unitario': detalle.precio_unitario
+                } for detalle in pedido.detalles]
+
+                pedido_data = {
+                    'id_pedido': pedido.id_pedido,
+                    'fecha_pedido': pedido.fecha_pedido.strftime('%Y-%m-%d %H:%M:%S'),
+                    'total': pedido.total,
+                    'estado': pedido.estado,
+                    'detalles': detalles_pedido
+                }
+
+                print(pedido_data)  # Depuración para verificar el JSON
+                resultado.append(pedido_data)
+
+            return jsonify(resultado)
+
+        except Exception as e:
+            return jsonify({'message': 'Error al obtener los pedidos', 'error': str(e)}), 500
+
+    @app.route('/mis-pedidos', methods=['GET'])
+    def listar_pedidos_cliente():
+        if 'cliente_id' not in session:
+            return jsonify({'message': 'No se ha iniciado sesión'}), 401
+
+        id_cliente = session['cliente_id']
         pedidos = Pedido.query.filter_by(id_cliente=id_cliente).all()
         resultado = []
         for pedido in pedidos:
@@ -173,7 +189,6 @@ def create_app():
                 'fecha_pedido': pedido.fecha_pedido,
                 'total': pedido.total,
                 'estado': pedido.estado,
-                #'detalles': detalles_pedido
             })
         return jsonify(resultado)
 
@@ -212,7 +227,6 @@ def create_app():
         db.session.commit()
         return jsonify({'message': 'Vino actualizado exitosamente'})
     
-
     @app.route('/wines/<int:id_vino>/stock', methods=['PUT'])
     def actualizar_stock(id_vino):
         data = request.get_json()
@@ -223,7 +237,6 @@ def create_app():
             return jsonify({'message': 'Stock actualizado exitosamente'})
         return jsonify({'message': 'La cantidad de stock es requerida'}), 400
     
-    # Ruta para agregar productos al carrito
     @app.route('/add-to-cart', methods=['POST'])
     def add_to_cart():
         data = request.get_json()
@@ -255,8 +268,32 @@ def create_app():
         db.session.commit()
 
         return jsonify({'message': 'Producto agregado al carrito exitosamente'}), 200
-    
-    #Inicio de la reserva de eventos
+
+    @app.route('/mis-reservas', methods=['GET'])
+    def listar_reservas_cliente():
+        if 'cliente_id' not in session:
+            return jsonify({'message': 'No se ha iniciado sesión'}), 401
+
+        id_cliente = session['cliente_id']
+        reservas = Reserva.query.filter_by(id_cliente=id_cliente).all()
+        resultado = []
+        for reserva in reservas:
+            evento = Evento.query.get(reserva.id_evento)
+            if not evento:
+                continue  # Opcional: manejar el caso donde el evento asociado a la reserva no existe
+            
+            resultado.append({
+                'id_reserva': reserva.id_reserva,
+                'id_evento': evento.id_evento,
+                'nombre_evento': evento.nombre,
+                'fecha_evento': evento.fecha.strftime("%d de %B, %Y"),
+                'hora_evento': evento.fecha.strftime("%H:%M"),
+                'cantidad': reserva.cantidad,
+                'total': "{:.2f}".format(reserva.total),
+                'descripcion': evento.descripcion
+            })
+        return jsonify(resultado)
+
 
     return app
 

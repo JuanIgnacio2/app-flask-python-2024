@@ -4,7 +4,7 @@ db = SQLAlchemy()
 
 class Cliente(db.Model):
     __tablename__ = 'clientes'
-    id_cliente = db.Column(db.Integer, primary_key=True)
+    id_cliente = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nombre = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     telefono = db.Column(db.String(15))
@@ -24,16 +24,16 @@ class Vino(db.Model):
 
 class Pedido(db.Model):
     __tablename__ = 'pedidos'
-    id_pedido = db.Column(db.Integer, primary_key=True)
+    id_pedido = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_cliente = db.Column(db.Integer, db.ForeignKey('clientes.id_cliente'))
     fecha_pedido = db.Column(db.DateTime, default=db.func.current_timestamp())
     total = db.Column(db.Numeric(10, 2), nullable=False)
     estado = db.Column(db.String(50), default='pendiente')
-    detalles = db.relationship('DetallePedido', backref='pedido', lazy=True)
+    detalles = db.relationship('DetallePedido', backref='pedido', lazy=True, cascade="all, delete-orphan")
 
 class DetallePedido(db.Model):
     __tablename__ = 'detalle_pedidos'
-    id_detalle = db.Column(db.Integer, primary_key=True)
+    id_detalle = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_pedido = db.Column(db.Integer, db.ForeignKey('pedidos.id_pedido', ondelete='CASCADE'))
     id_vino = db.Column(db.Integer, db.ForeignKey('vinos.id_vino'))
     cantidad = db.Column(db.Integer, nullable=False)
@@ -62,10 +62,11 @@ class Evento(db.Model):
 
 class Reserva(db.Model):
     __tablename__ = 'reservas'
-    id_reserva = db.Column(db.Integer, primary_key=True)
-    id_evento = db.Column(db.Integer, db.ForeignKey('eventos.id_evento', ondelete='CASCADE'))
-    id_cliente = db.Column(db.Integer, db.ForeignKey('clientes.id_cliente'))
+    id_reserva = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_evento = db.Column(db.Integer, db.ForeignKey('eventos.id_evento', ondelete='CASCADE'), nullable=False)
+    id_cliente = db.Column(db.Integer, db.ForeignKey('clientes.id_cliente'), nullable=False)
     fecha_reserva = db.Column(db.DateTime, default=db.func.current_timestamp())
     cantidad = db.Column(db.Integer, nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
-    estado = db.Column(db.String(50), default='pendiente')
+    evento = db.relationship('Evento', backref=db.backref('reservas', lazy=True))
+    cliente = db.relationship('Cliente', backref=db.backref('reservas', lazy=True))

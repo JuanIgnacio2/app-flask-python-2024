@@ -11,6 +11,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const productPrice = parseFloat(productElement.getAttribute('data-price'));
             const productQuantity = parseInt(productElement.querySelector('.quantity').innerText);
 
+            productElement.querySelector('.quantity').innerText = '1';
+
             if (isNaN(productId)) {
                 console.error("ID del producto es inválido");
                 return;
@@ -156,30 +158,38 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('verPedidos').addEventListener('click', function () {
-        const idCliente = 2/* Aquí debes obtener el ID del cliente, puedes pasarlo desde el backend o almacenarlo en tu frontend */;
-        
-        fetch(`/pedidos/${idCliente}`)
+        fetch('/mis-pedidos')
             .then(response => response.json())
             .then(pedidos => {
+                console.log('Pedidos:', pedidos);
                 const modalBody = document.getElementById('pedidosModalBody');
                 modalBody.innerHTML = ''; // Limpiamos el modal
 
-                // Iterar sobre los pedidos y agregarlos al modal
                 pedidos.forEach(pedido => {
                     const pedidoItem = document.createElement('div');
                     pedidoItem.classList.add('pedido-item');
-
-                    const total = typeof pedido.total === 'number' ? pedido.total.toFixed(2) : 'N/A';
+                    
+                    /*const detallesHtml = pedido.detalles.map(detalle => `
+                        <li>${detalle.nombre_vino} - Cantidad: ${detalle.cantidad} - Precio Unitario: $${detalle.precio_unitario.toFixed(2)}</li>
+                    `).join('');    */
 
                     pedidoItem.innerHTML = `
-                        <h5>Pedido ID: ${pedido.id_pedido}</h5>
+                        <h5>Código pedido: ${pedido.id_pedido}</h5>
                         <p>Fecha del Pedido: ${pedido.fecha_pedido}</p>
-                        <p>Total: $${total}</p>`
-                        /*<ul>
-                            ${pedido.detalles.map(detalle => `<li>${detalle.id_vino} - Cantidad: ${detalle.cantidad}</li>`).join('')}
-                        </ul>*/
+                        <p>Total: $${pedido.total}</p>
+                        <p>Estado: ${pedido.estado}</p>
+                        <button class="btn btn-danger cancelar-pedido" data-id="${pedido.id_pedido}">Cancelar Pedido</button>`
+                        //<ul>${detallesHtml}</ul>`
                     ;
                     modalBody.appendChild(pedidoItem);
+                });
+
+                // Cancelar pedido
+                document.querySelectorAll('.cancelar-pedido').forEach(button => {
+                    button.addEventListener('click', function () {
+                        const idPedido = this.getAttribute('data-id');
+                        cancelarPedido(idPedido);
+                    });
                 });
 
                 // Mostrar el modal de pedidos
@@ -193,6 +203,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 alert('Error al cargar los pedidos. Por favor, inténtalo de nuevo más tarde.');
             });
     });
+
+    function cancelarPedido(idPedido) {
+        fetch(`/pedido/${idPedido}`, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.error) {
+                alert(result.error);
+            } else {
+                alert(result.message);
+                document.getElementById('verPedidos').click();
+            }
+        })
+        .catch(error => {
+            console.error('Error al cancelar el pedido:', error);
+            alert('Error al cancelar el pedido. Por favor, inténtalo de nuevo más tarde.');
+        });
+    }
 
     updateCartIcon();
 });

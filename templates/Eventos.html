@@ -16,12 +16,13 @@
     <!-- Favicon -->
     <link rel="icon" href="{{ url_for('static', filename='src/icons8-wine-48.ico') }}" title="wine icons">
 
+    <!--  JavaScripts -->
     <!-- Bootstrap Bundle JS (Bootstrap JS and Popper.js) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-
-    <!--  JavaScripts -->
-    <script src="{{ url_for('static', filename='eventos.js') }}"></script>
-    <script src="{{ url_for('static', filename='cargar_reserva.js') }}"></script>
+    <script src="{{ url_for('static', filename='reservas.js') }}"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     
     <style>
         .title-format {
@@ -78,7 +79,7 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                             {% if session.get('cliente_nombre') %}
-                                <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#reservasModal">Ver Reservas</a></li>
+                                <li><a class="dropdown-item" id="verReservasBtn" href="#" data-bs-toggle="modal" data-bs-target="#reservasModal">Ver Reservas</a></li>
                                 <li><a class="dropdown-item" href="{{ url_for('logout') }}">Cerrar sesión</a></li>
                             {% else %}
                                 <li><a class="dropdown-item" href="{{ url_for('login') }}">Iniciar sesión</a></li>
@@ -99,87 +100,66 @@
                 <p class="subtitle-format">Descubre experiencias únicas en nuestras bodegas</p>
             </div>
             <div class="row">
+                {% for evento in eventos %}
                 <div class="col-md-6 mb-4">
                     <div class="card">
-                        <img src="{{ url_for('static', filename='src/Event_tasting.webp') }}" class="card-img-top" alt="Evento 1">
+                        <img src="{{ evento.imagen_url }}" class="card-img-top" alt="{{ evento.nombre }}">
                         <div class="card-body text-center">
-                            <h5 class="card-title">Cata de Vinos</h5>
-                            <p class="card-text">Disfruta de una noche especial con una selección de nuestros mejores vinos acompañados de quesos gourmet.</p>
-                            <p class="card-text"><small class="text-muted">Fecha: 20 de Julio, 2024</small></p>
-                            <p class="card-text"><small class="text-muted">Hora: 19:00</small></p>
-                            <form action="{{ url_for('reservar', evento_id=1) }}" method="post">
-                                <input type="number" name="cantidad" min="1" max="10" value="1" class="form-control mb-2 text-center" required>
-                                <button type="submit" class="btn btn-secondary">Reservar</button>
-                            </form>
+                            <h5 class="card-title">{{ evento.nombre }}</h5>
+                            <p class="card-text">{{ evento.descripcion }}</p>
+                            <p class="card-text"><small class="text-muted">Fecha: {{ evento.fecha.strftime('%d de %B, %Y') }}</small></p>
+                            <p class="card-text"><small class="text-muted">Hora: {{ evento.fecha.strftime('%H:%M') }}</small></p>
+                            <p class="card-text"><small class="text-muted">Lugares:</small></p>
+                            <button type="button" class="btn btn-primary reserva-btn" data-bs-toggle="modal" data-bs-target="#eventoModal{{ evento.id_evento }}">
+                                Ver detalles y reservar
+                            </button>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <img src="{{ url_for('static', filename='src/winery_tour.webp') }}" class="card-img-top" alt="Evento 2">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Tour del Viñedo</h5>
-                            <p class="card-text">Únete a nosotros para un recorrido guiado por nuestros viñedos, seguido de una degustación de vinos en nuestra bodega.</p>
-                            <p class="card-text"><small class="text-muted">Fecha: 27 de Junio, 2024</small></p>
-                            <p class="card-text"><small class="text-muted">Hora: 10:00</small></p>
-                            <form action="{{ url_for('reservar', evento_id=2) }}" method="post">
-                                <input type="number" name="cantidad" min="1" max="10" value="1" class="form-control mb-2 text-center" required>
-                                <button type="submit" class="btn btn-secondary">Reservar</button>
-                            </form>
+                <!-- Modal confirmación -->
+                <div class="modal fade" id="eventoModal{{ evento.id_evento }}" tabindex="-1" aria-labelledby="eventoModalLabel{{ evento.id_evento }}" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="eventoModalLabel{{ evento.id_evento }}">{{ evento.nombre }}</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>{{ evento.descripcion }}</p>
+                                <p><strong>Fecha:</strong> {{ evento.fecha.strftime('%d de %B, %Y') }}</p>
+                                <p><strong>Hora:</strong> {{ evento.fecha.strftime('%H:%M') }}</p>
+                                <form class="reserva-form" action="{{ url_for('reservar', evento_id=evento.id_evento) }}" method="post" data-evento-id="{{ evento.id_evento }}">
+                                    <input type="number" name="cantidad" min="1" max="10" value="1" class="form-control mb-2 text-center" required>
+                                    <button type="submit" class="btn btn-primary w-100">Confirmar reserva</button>
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <img src="{{ url_for('static', filename='src/Marinaje_Lombardi.webp') }}" class="card-img-top" alt="Evento 3">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Maridaje Vino y Comida</h5>
-                            <p class="card-text">Descubre la perfecta combinación de nuestros vinos con platos especialmente seleccionados por nuestro chef.</p>
-                            <p class="card-text"><small class="text-muted">Fecha: 4 de Julio, 2024</small></p>
-                            <p class="card-text"><small class="text-muted">Hora: 20:00</small></p>
-                            <form action="{{ url_for('reservar', evento_id=3) }}" method="post">
-                                <input type="number" name="cantidad" min="1" max="10" value="1" class="form-control mb-2 text-center" required>
-                                <button type="submit" class="btn btn-secondary">Reservar</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-6 mb-4">
-                    <div class="card">
-                        <img src="{{ url_for('static', filename='src/Festival del vino.webp') }}" class="card-img-top" alt="Evento 4">
-                        <div class="card-body text-center">
-                            <h5 class="card-title">Festival del Vino</h5>
-                            <p class="card-text">Celebra con nosotros en nuestro festival anual del vino, con música en vivo, comida y, por supuesto, mucho vino.</p>
-                            <p class="card-text"><small class="text-muted">Fecha: 12 de Julio, 2024</small></p>
-                            <p class="card-text"><small class="text-muted">Hora: Todo el día</small></p>
-                            <form action="{{ url_for('reservar', evento_id=4) }}" method="post">
-                                <input type="number" name="cantidad" min="1" max="10" value="1" class="form-control mb-2 text-center" required>
-                                <button type="submit" class="btn btn-secondary">Reservar</button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+                </div>   
+                {% endfor %}
             </div>
         </div>
         
         <!-- Modal de Reservas -->
         <div class="modal fade" id="reservasModal" tabindex="-1" aria-labelledby="reservasModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="reservasModalLabel">Mis Reservas</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="reservasModalBody">
-                        <!-- Aquí se llenarán dinámicamente las reservas del usuario -->
-                        <p>No tienes reservas pendientes.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- Sección de Frase -->
-        <section class="inspiration-section" style="background-image: url('{{ url_for('static', filename='src/encuentros_vino.webp') }}');">
+        <section class="inspiration-section" style="background-image: url('{{ url_for('static', filename='static/src/encuentros_vino.webp') }}');">
             <div class="inspiration-text fade-in">
                 <h2>Encuentros Inolvidables con Vino</h2>
                 <p>“El vino une a las personas en momentos de alegría y celebración.”</p>

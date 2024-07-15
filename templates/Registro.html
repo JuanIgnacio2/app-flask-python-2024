@@ -22,6 +22,7 @@
         body {
             display: flex;
             flex-direction: column;
+            font-family: 'Playfair Display', serif;
         }
         main {
             flex: 1;
@@ -33,9 +34,18 @@
             width: 100%;
             background-color: #343a40;
             color: white;
+            margin-top: 50px;
         }
         .form-container {
-            margin-top: 100px; /* Adjust this value as needed */
+            margin-top: 70px;
+        }
+        .btn-registrarse {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-registrarse:hover {
+            background-color: #495057; 
+            border-color: #495057;
         }
     </style>
 </head>
@@ -104,7 +114,7 @@
                                         <label for="password" class="form-label">Contraseña</label>
                                         <input type="password" class="form-control" id="password" name="password" required>
                                     </div>
-                                    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                                    <button type="submit" class="btn btn-primary btn-registrarse w-100">Registrarse</button>
                                 </form>
                             </div>
                         </div>

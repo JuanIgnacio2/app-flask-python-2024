@@ -23,6 +23,7 @@
         body {
             display: flex;
             flex-direction: column;
+            font-family: 'Playfair Display', serif;
         }
         main {
             flex: 1;
@@ -34,9 +35,18 @@
             width: 100%;
             background-color: #343a40;
             color: white;
+            margin-top: 50px;
         }
         .form-container {
-            margin-top: 100px; /* Adjust this value as needed */
+            margin-top: 160px;
+        }
+        .btn-login {
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+        .btn-login:hover {
+            background-color: #495057; 
+            border-color: #495057;
         }
     </style>
 </head>
@@ -93,7 +103,7 @@
                                     <input type="password" class="form-control" id="password" name="password" required>
                                 </div>
                                 <div class="d-grid">
-                                    <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+                                    <button type="submit" class="btn btn-primary btn-login btn-block">Iniciar Sesión</button>
                                 </div>
                             </form>
                         </div>
