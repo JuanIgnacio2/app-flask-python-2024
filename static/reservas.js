@@ -60,6 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="card-text">Cantidad: ${reserva.cantidad}</p>
                                 <p class="card-text">Total: ${reserva.total}</p>
                                 <p class="card-text">Descripción: ${reserva.descripcion}</p>
+                                <button class="btn btn-danger cancelar-reserva" data-id="${reserva.id_reserva}">Cancelar Reserva</button>
                             </div>
                         </div>
                     `;
@@ -67,12 +68,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
 
+            // Añadir event listener a los botones de cancelar
+            document.querySelectorAll('.cancelar-reserva').forEach(button => {
+                button.addEventListener('click', function () {
+                    const idReserva = this.getAttribute('data-id');
+                    cancelarReserva(idReserva);
+                });
+            });
+
             const reservasModal = new bootstrap.Modal(document.getElementById('reservasModal'));
-            reservasModal.show();
+            reservasModal.show(); //Mostramos el modal
         })
         .catch(error => {
             console.error('Error al obtener las reservas:', error);
             alert('Hubo un problema al obtener las reservas. Por favor, inténtalo nuevamente.');
         });
     });
+
+    // Función para cancelar una reserva
+    function cancelarReserva(idReserva, buttonElement) {
+        fetch(`/cancelar-reserva/${idReserva}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.message === 'Reserva cancelada exitosamente') {
+                alert(data.message);
+                // Actualizar la lista de reservas
+                const reservaItem = buttonElement.closest('.reserva-item');
+                if (reservaItem) {
+                    reservaItem.remove();
+                }
+            } else {
+                alert('Error al cancelar la reserva: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error al cancelar la reserva:', error);
+            alert('Error al cancelar la reserva. Por favor, inténtalo de nuevo más tarde.');
+        });
+    }
 });

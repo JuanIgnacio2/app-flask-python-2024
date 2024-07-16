@@ -109,7 +109,6 @@
                             <p class="card-text">{{ evento.descripcion }}</p>
                             <p class="card-text"><small class="text-muted">Fecha: {{ evento.fecha.strftime('%d de %B, %Y') }}</small></p>
                             <p class="card-text"><small class="text-muted">Hora: {{ evento.fecha.strftime('%H:%M') }}</small></p>
-                            <p class="card-text"><small class="text-muted">Lugares:</small></p>
                             <button type="button" class="btn btn-primary reserva-btn" data-bs-toggle="modal" data-bs-target="#eventoModal{{ evento.id_evento }}">
                                 Ver detalles y reservar
                             </button>
@@ -129,9 +128,12 @@
                                 <p><strong>Fecha:</strong> {{ evento.fecha.strftime('%d de %B, %Y') }}</p>
                                 <p><strong>Hora:</strong> {{ evento.fecha.strftime('%H:%M') }}</p>
                                 <form class="reserva-form" action="{{ url_for('reservar', evento_id=evento.id_evento) }}" method="post" data-evento-id="{{ evento.id_evento }}">
+                                    <p><strong>Lugares:</strong></p>
                                     <input type="number" name="cantidad" min="1" max="10" value="1" class="form-control mb-2 text-center" required>
-                                    <button type="submit" class="btn btn-primary w-100">Confirmar reserva</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <div class="d-flex justify-content-between">
+                                        <button type="submit" class="btn btn-primary flex-grow-1 me-2">Confirmar reserva</button>
+                                        <button type="button" class="btn btn-secondary flex-grow-1" data-bs-dismiss="modal">Cancelar</button>
+                                    </div>
                                 </form>
                             </div>
                         </div>
@@ -143,15 +145,13 @@
         
         <!-- Modal de Reservas -->
         <div class="modal fade" id="reservasModal" tabindex="-1" aria-labelledby="reservasModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="reservasModalLabel">Mis Reservas</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body" id="reservasModalBody">
-                    </div>
-                    <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                     </div>
                 </div>

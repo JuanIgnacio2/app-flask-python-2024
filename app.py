@@ -147,7 +147,7 @@ def create_app():
         try:
             pedidos = Pedido.query.options(joinedload(Pedido.detalles)).all()
             resultado = []
-
+            
             for pedido in pedidos:
                 detalles_pedido = [{
                     'id_vino': detalle.id_vino,
@@ -294,6 +294,18 @@ def create_app():
             })
         return jsonify(resultado)
 
+    @app.route('/cancelar-reserva/<int:id_reserva>', methods=['DELETE'])
+    def eliminar_reserva(id_reserva):
+        try:
+            reserva = Reserva.query.get_or_404(id_reserva)
+            if(reserva):
+                db.session.delete(reserva)
+                db.session.commit()
+                return jsonify({'message': 'Reserva cancelada exitosamente'})
+            else:
+                return jsonify({'message': 'Reserva no encontrada'}), 404
+        except Exception as e:
+            return jsonify({'message': 'Error al cancelar la reserva', 'error': str(e)}), 500
 
     return app
 
