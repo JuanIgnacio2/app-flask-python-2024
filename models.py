@@ -68,5 +68,6 @@ class Reserva(db.Model):
     fecha_reserva = db.Column(db.DateTime, default=db.func.current_timestamp())
     cantidad = db.Column(db.Integer, nullable=False)
     total = db.Column(db.Numeric(10, 2), nullable=False)
+    estado = db.Column(db.Text)
     evento = db.relationship('Evento', backref=db.backref('reservas', lazy=True))
     cliente = db.relationship('Cliente', backref=db.backref('reservas', lazy=True))

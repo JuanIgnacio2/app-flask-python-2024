@@ -141,8 +141,6 @@ form.d-flex {
   }
 }
 
-
-
 #redes_footer {
   display: flex;
   align-items: center;
@@ -184,7 +182,7 @@ form.d-flex {
 }
 
 .btn-purple:hover {
-  background-color: #6d2a88 !important; /* Lila vino más oscuro */
+  background-color: #6d2a88 !important;
 }
 
 .btn-purple:focus {

@@ -231,17 +231,8 @@
       <!---Sección productos-->
       <div class="products row">
         {% for vino in vinos %}
-        <div
-          class="col-md-3 product d-flex flex-column align-items-center"
-          data-id="{{ vino.id_vino }}"
-          data-name="{{ vino.nombre }}"
-          data-price="{{ vino.precio }}"
-        >
-          <img
-            src="{{ vino.imagen_url }}"
-            alt="{{ vino.nombre }}"
-            class="img-fluid"
-          />
+        <div class="col-md-3 product d-flex flex-column align-items-center" data-id="{{ vino.id_vino }}" data-name="{{ vino.nombre }}" data-price="{{ vino.precio }}">
+          <img src="{{ vino.imagen_url }}" alt="{{ vino.nombre }}" class="img-fluid"/>
           <button class="btn btn-grey mt-2 add-to-cart">Agregar</button>
           <div class="quantity-controls mt-2 d-flex align-items-center">
             <button class="btn btn-outline-secondary decrease">-</button>
@@ -253,40 +244,19 @@
       </div>
 
       <!---Sección carrito -ecommerce-->
-      <div
-        class="modal fade"
-        id="cartModal"
-        tabindex="-1"
-        aria-labelledby="cartModalLabel"
-        aria-hidden="true"
-      >
+      <div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title" id="cartModalLabel">
-                Carrito de Compras
-              </h5>
-              <button
-                type="button"
-                class="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+              <h5 class="modal-title" id="cartModalLabel">Carrito de Compras</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
               <ul id="cartItems" class="list-group"></ul>
             </div>
             <div class="modal-footer">
-              <button
-                type="button"
-                class="btn btn-secondary"
-                data-bs-dismiss="modal"
-              >
-                Cerrar
-              </button>
-              <button id="checkout" type="button" class="btn btn-primary">
-                Finalizar compra
-              </button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button id="checkout" type="button" class="btn btn-primary">Finalizar compra</button>
             </div>
           </div>
         </div>

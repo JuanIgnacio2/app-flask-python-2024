@@ -312,6 +312,7 @@ footer {
   justify-content: space-between;
   padding: 1rem;
 }
+
 /* Estilos adicionales para el logo */
 footer img {
   margin-top: 10px; /* Espacio entre el texto y el logo */
@@ -327,18 +328,18 @@ footer img {
 
 .title-format {
   font-family: 'Playfair Display', serif;
-  font-size: 3rem; /* Cambia el tamaño de la fuente según tus necesidades */
-  color: #333; /* Cambia el color según tus necesidades */
-  text-align: center; /* Asegura que el texto esté centrado */
-  margin-bottom: 20px; /* Ajusta el margen inferior */
+  font-size: 3rem;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 .subtitle-format {
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem; 
-  color: #555; /* Cambia el color según tus necesidades */
-  text-align: center; /* Asegura que el texto esté centrado */
-  margin-bottom: 40px; /* Ajusta el margen inferior */
+  color: #555;
+  text-align: center;
+  margin-bottom: 40px;
 }
 .product-list-container {
     display: flex;

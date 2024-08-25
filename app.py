@@ -42,10 +42,6 @@ def create_app():
 
         return redirect(url_for('eventos'))
 
-    @app.route('/cart')
-    def cart():
-        return 'Esta es la página del carrito.'
-
     @app.route('/register', methods=['GET', 'POST'])
     def register():
         if request.method == 'POST':
@@ -280,7 +276,7 @@ def create_app():
         for reserva in reservas:
             evento = Evento.query.get(reserva.id_evento)
             if not evento:
-                continue  # Opcional: manejar el caso donde el evento asociado a la reserva no existe
+                continue  # Manejar el caso donde el evento asociado a la reserva no existe
             
             resultado.append({
                 'id_reserva': reserva.id_reserva,
@@ -290,7 +286,9 @@ def create_app():
                 'hora_evento': evento.fecha.strftime("%H:%M"),
                 'cantidad': reserva.cantidad,
                 'total': "{:.2f}".format(reserva.total),
-                'descripcion': evento.descripcion
+                'descripcion': evento.descripcion,
+                'estado' : reserva.estado,
+                'imagen_url' : evento.imagen_url
             })
         return jsonify(resultado)
 
