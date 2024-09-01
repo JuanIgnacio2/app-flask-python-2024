@@ -100,6 +100,7 @@ form.d-flex {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1px;
 }
 
 .quantity-controls button {
@@ -113,6 +114,7 @@ form.d-flex {
 .quantity {
   width: 30px;
   text-align: center;
+  line-height: 30px;
 }
 
 #cartIcon {
@@ -170,7 +172,7 @@ form.d-flex {
 }
 
 .btn-purple {
-  background-color: #7d3c98 !important; /* Lila vino */
+  background-color: #7d3c98 !important;
   color: #fff !important;
   font-family: 'Playfair Display', serif;
   text-align: center;

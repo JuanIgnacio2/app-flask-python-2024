@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const productId = parseInt(productElement.getAttribute('data-id'));
             const productName = productElement.getAttribute('data-name');
             const productPrice = parseFloat(productElement.getAttribute('data-price'));
+            const productImage = productElement.querySelector('img').src;
             const productQuantity = parseInt(productElement.querySelector('.quantity').innerText);
 
             productElement.querySelector('.quantity').innerText = '1';
@@ -23,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (productInCart) {
                 productInCart.quantity += productQuantity;
             } else {
-                cart.push({ id: productId, name: productName, price: productPrice, quantity: productQuantity });
+                cart.push({ id: productId, name: productName, price: productPrice, quantity: productQuantity, image: productImage });
             }
 
             updateCartModal();
@@ -97,17 +98,28 @@ document.addEventListener('DOMContentLoaded', () => {
         cart.forEach((item, index) => {
             const li = document.createElement('li');
             li.className = 'list-group-item d-flex justify-content-between align-items-center';
+        
             li.innerHTML = `
-                ${item.name} - $${item.price.toFixed(2)}
-                <div class="quantity-controls">
-                    <button class="btn btn-sm btn-secondary decrease" data-index="${index}">-</button>
-                    <span class="quantity">${item.quantity}</span>
-                    <button class="btn btn-sm btn-secondary increase" data-index="${index}">+</button>
+                <div class="d-flex align-items-center" style="flex: 1;">
+                    <img src="${item.image}" alt="${item.name}" style="width: 50px; height: auto; margin-right: 15px;" />
+                    <div>
+                        <span>${item.name}</span><br>
+                        <span>$${item.price.toFixed(2)}</span>
+                    </div>
                 </div>
-                <button class="btn btn-sm btn-danger remove" data-index="${index}">Eliminar</button>
+                <div class="d-flex align-items-center" style="gap: 10px;">
+                    <div class="quantity-controls d-flex align-items-center">
+                        <button class="btn btn-sm btn-secondary decrease" data-index="${index}">-</button>
+                        <span class="quantity mx-2">${item.quantity}</span>
+                        <button class="btn btn-sm btn-secondary increase" data-index="${index}">+</button>
+                    </div>
+                    <button class="btn btn-sm btn-danger remove" data-index="${index}">Eliminar</button>
+                </div>
             `;
+        
             cartItemsList.appendChild(li);
         });
+        
 
         document.querySelectorAll('.increase').forEach(button => {
             button.addEventListener('click', function () {

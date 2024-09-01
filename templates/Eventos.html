@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='Estilos.css') }}">
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='Estilos.css') }}">-->
+    <link rel="stylesheet" href="../static/Estilos.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap" rel="stylesheet">
@@ -34,7 +35,6 @@
     </style>
 </head>
 <body>
-    <script src="{{ url_for('static', filename='main.js') }}"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCayOpyi-2KF_Qj3lc18qcOqH3On2jwPz8&libraries=places&callback=initMap" defer></script>
     
     <!-- Navbar -->
@@ -107,9 +107,7 @@
                             <p class="card-text">{{ evento.descripcion }}</p>
                             <p class="card-text"><small class="text-muted">Fecha: {{ evento.fecha.strftime('%d de %B, %Y') }}</small></p>
                             <p class="card-text"><small class="text-muted">Hora: {{ evento.fecha.strftime('%H:%M') }}</small></p>
-                            <button type="button" class="btn btn-primary reserva-btn" data-bs-toggle="modal" data-bs-target="#eventoModal{{ evento.id_evento }}">
-                                Ver detalles y reservar
-                            </button>
+                            <button type="button" class="btn btn-grey reserva-btn" data-bs-toggle="modal" data-bs-target="#eventoModal{{ evento.id_evento }}">Ver detalles y reservar</button>
                         </div>
                     </div>
                 </div>

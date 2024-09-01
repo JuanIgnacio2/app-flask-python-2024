@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                 },
-                body: `cantidad=${cantidad}`
+                body: `cantidad=${cantidad}&estado=Pendiente`
             })
             .then(response => {
                 if (response.ok) {

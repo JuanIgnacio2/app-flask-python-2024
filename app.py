@@ -35,8 +35,9 @@ def create_app():
         cliente_id = session.get('cliente_id')
         cantidad = int(request.form['cantidad'])
         total = cantidad * evento.precio
+        estado = request.form['estado']
 
-        nueva_reserva = Reserva(id_evento=evento_id, id_cliente=cliente_id, cantidad=cantidad, total=total)
+        nueva_reserva = Reserva(id_evento=evento_id, id_cliente=cliente_id, cantidad=cantidad, total=total, estado=estado)
         db.session.add(nueva_reserva)
         db.session.commit()
 

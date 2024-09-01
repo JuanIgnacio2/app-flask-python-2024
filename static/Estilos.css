@@ -1,4 +1,3 @@
-
 .center-content {
     display: flex;
     justify-content: center;
@@ -18,11 +17,11 @@ body {
 }
 
 .navbar {
-  font-family: 'Playfair Display', serif; /* Añadir esta línea */
+  font-family: 'Playfair Display', serif;
 }
 
 footer {
-  font-family: 'Playfair Display', serif; /* Añadir esta línea */
+  font-family: 'Playfair Display', serif;
 }
 
 .navbar-brand img {
@@ -148,7 +147,7 @@ footer {
 .historia {
   max-width: 700px;
   font-family: 'Playfair Display', serif;
-  text-align: center; /* Asegúrate de que el texto esté centrado */
+  text-align: center;
   font-size: 1.5rem;
 }
 
@@ -168,7 +167,7 @@ footer {
   height: auto;
   object-fit: cover;
   display: block;
-  margin: 20px 0; /* Añade margen para separar el texto de la imagen */
+  margin: 20px 0;
 }
 
 /* Sección frase */
@@ -315,7 +314,7 @@ footer {
 
 /* Estilos adicionales para el logo */
 footer img {
-  margin-top: 10px; /* Espacio entre el texto y el logo */
+  margin-top: 10px;
 }
 
 /* Nuevos estilos para la sección de eventos */
@@ -375,4 +374,25 @@ footer img {
   .product-price {
     font-weight: bold;
     margin: 0;
+  }
+
+  .btn-grey {
+    background-color: #555 !important;
+    color: #fff !important;
+    font-family: 'Playfair Display', serif;
+    text-align: center;
+    font-size: 1rem;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-grey:hover {
+    background-color: #444 !important;
+  }
+  
+  .btn-grey:focus {
+    outline: none;
+    box-shadow: 0 0 5px #444;
   }
